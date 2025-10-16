@@ -26,6 +26,8 @@ class AppConstants {
   // Default values
   static const int defaultWaterDuration = 30; // seconds
   static const int defaultWaterAmount = 200; // milliliters
+  static const int defaultLightDurationMinutes = 60; // minutes
+  static const int defaultLightIntensityPercent = 80; // percentage output
 
   // Animation durations
   static const Duration shortAnimation = Duration(milliseconds: 200);

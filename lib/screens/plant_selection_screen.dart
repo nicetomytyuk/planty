@@ -258,15 +258,25 @@ class _PlantSelectionScreenState extends State<PlantSelectionScreen> {
                           Icons.water_drop,
                           '${plant.minHumidity.toInt()}-${plant.maxHumidity.toInt()}%',
                         ),
-                        _buildInfoChip(
-                          context,
-                          Icons.schedule,
-                          '${plant.irrigationFrequency.inHours}h',
-                        ),
-                      ],
+                    _buildInfoChip(
+                      context,
+                      Icons.schedule,
+                      '${plant.irrigationFrequency.inHours}h',
+                    ),
+                    _buildInfoChip(
+                      context,
+                      Icons.light_mode,
+                      '${plant.minLightHours.toStringAsFixed(1)}-${plant.maxLightHours.toStringAsFixed(1)}h',
+                    ),
+                    _buildInfoChip(
+                      context,
+                      Icons.wb_incandescent_outlined,
+                      '${plant.preferredLightIntensity.toStringAsFixed(0)} lux',
                     ),
                   ],
                 ),
+              ],
+            ),
               ),
 
               // Selection indicator

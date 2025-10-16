@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../models/vase.dart';
 import '../models/plant.dart';
 import '../services/static_data_service.dart';
+import '../utils/constants.dart';
 
 /// Manages the state of all vases in the application
 class VaseProvider with ChangeNotifier {
@@ -28,6 +29,10 @@ class VaseProvider with ChangeNotifier {
   /// Get vases that need watering
   List<Vase> get vasesNeedingWater =>
       _vases.where((v) => v.needsWatering).toList();
+
+  /// Get vases that need supplemental lighting
+  List<Vase> get vasesNeedingLight =>
+      _vases.where((v) => v.needsLighting).toList();
 
   /// Initialize data - fetch vases and plant library
   Future<void> initialize() async {
@@ -99,6 +104,8 @@ class VaseProvider with ChangeNotifier {
           _vases[vaseIndex] = _vases[vaseIndex].copyWith(
             plant: plant,
             nextIrrigation: DateTime.now().add(plant.irrigationFrequency),
+            nextLighting: DateTime.now().add(const Duration(hours: 2)),
+            dailyLightExposure: 0.0,
           );
           notifyListeners();
           return true;
@@ -126,6 +133,8 @@ class VaseProvider with ChangeNotifier {
           _vases[vaseIndex] = _vases[vaseIndex].copyWith(
             clearPlant: true,
             nextIrrigation: null,
+            nextLighting: null,
+            dailyLightExposure: 0.0,
           );
           notifyListeners();
           return true;
@@ -164,6 +173,42 @@ class VaseProvider with ChangeNotifier {
     } catch (e) {
       _errorMessage = 'Failed to water vase: $e';
       debugPrint('Error watering vase: $e');
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Trigger manual lighting boost for a vase
+  Future<bool> boostLighting(
+    String vaseId, {
+    int? durationMinutes,
+    int intensityPercentage = AppConstants.defaultLightIntensityPercent,
+  }) async {
+    try {
+      final vase = getVaseById(vaseId);
+      if (vase == null) return false;
+
+      final computedDuration = vase.plant != null
+          ? (vase.plant!.minLightHours * 10).round()
+          : AppConstants.defaultLightDurationMinutes;
+      final normalizedDuration =
+          computedDuration.clamp(30, 180).toInt();
+      final duration = durationMinutes ?? normalizedDuration;
+
+      final success = await _dataService.triggerManualLighting(
+        vaseId,
+        duration,
+        intensityPercentage: intensityPercentage,
+      );
+
+      if (success) {
+        await refreshVases();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      _errorMessage = 'Failed to adjust lighting: $e';
+      debugPrint('Error adjusting lighting: $e');
       notifyListeners();
       return false;
     }

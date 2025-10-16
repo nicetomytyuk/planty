@@ -8,6 +8,7 @@ class VaseCard extends StatelessWidget {
   final VoidCallback onTap;
   final VoidCallback? onPlantTap;
   final VoidCallback? onWaterTap;
+  final VoidCallback? onLightTap;
   final bool compact;
 
   const VaseCard({
@@ -16,6 +17,7 @@ class VaseCard extends StatelessWidget {
     required this.onTap,
     this.onPlantTap,
     this.onWaterTap,
+    this.onLightTap,
     this.compact = false,
   });
 
@@ -490,7 +492,7 @@ class VaseCard extends StatelessWidget {
         border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           _buildStatItem(
             context,
@@ -510,6 +512,17 @@ class VaseCard extends StatelessWidget {
             Icons.water,
             'Total Used',
             '${vase.totalWaterUsed.toStringAsFixed(1)}L',
+          ),
+          Container(
+            width: 1,
+            height: 40,
+            color: Colors.grey.withValues(alpha: 0.3),
+          ),
+          _buildStatItem(
+            context,
+            vase.isLightOn ? Icons.wb_incandescent : Icons.light_mode,
+            'Light ${vase.lightingStatus}',
+            '${vase.dailyLightExposure.toStringAsFixed(1)}h',
           ),
         ],
       ),
@@ -574,6 +587,14 @@ class VaseCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 6),
+            IconButton.outlined(
+              onPressed: onLightTap,
+              icon: const Icon(Icons.light_mode),
+              style: OutlinedButton.styleFrom(
+                side: BorderSide(color: theme.colorScheme.secondary),
+              ),
+            ),
+            const SizedBox(width: 6),
             IconButton.filled(
               onPressed: onTap,
               icon: const Icon(Icons.info_outline),
@@ -584,21 +605,39 @@ class VaseCard extends StatelessWidget {
           ],
         );
       }
-      return Row(
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: onWaterTap,
-              icon: const Icon(Icons.water_drop, size: 18),
-              label: const Text('Water Now'),
-              style: OutlinedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                side: BorderSide(color: theme.colorScheme.primary),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: onWaterTap,
+                  icon: const Icon(Icons.water_drop, size: 18),
+                  label: const Text('Water Now'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    side: BorderSide(color: theme.colorScheme.primary),
+                  ),
+                ),
               ),
-            ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: onLightTap,
+                  icon: const Icon(Icons.light_mode, size: 18),
+                  label: const Text('Light Boost'),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    side: BorderSide(color: theme.colorScheme.secondary),
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 8),
-          Expanded(
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
             child: ElevatedButton(
               onPressed: onTap,
               style: ElevatedButton.styleFrom(

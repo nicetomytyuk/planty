@@ -7,6 +7,9 @@ class Plant {
   final double maxHumidity; // Percentage (0-100)
   final Duration irrigationFrequency; // How often to water
   final int waterAmount; // Water amount in milliliters
+  final double minLightHours; // Recommended minimum daily light (hours)
+  final double maxLightHours; // Recommended maximum daily light (hours)
+  final double preferredLightIntensity; // Target light intensity in lux
   final String description;
   final String careInstructions;
 
@@ -19,6 +22,9 @@ class Plant {
     required this.maxHumidity,
     required this.irrigationFrequency,
     required this.waterAmount,
+    required this.minLightHours,
+    required this.maxLightHours,
+    required this.preferredLightIntensity,
     required this.description,
     required this.careInstructions,
   });
@@ -36,6 +42,10 @@ class Plant {
         hours: json['irrigationFrequencyHours'] as int,
       ),
       waterAmount: json['waterAmount'] as int,
+      minLightHours: (json['minLightHours'] as num).toDouble(),
+      maxLightHours: (json['maxLightHours'] as num).toDouble(),
+      preferredLightIntensity:
+          (json['preferredLightLux'] as num).toDouble(),
       description: json['description'] as String,
       careInstructions: json['careInstructions'] as String,
     );
@@ -52,6 +62,9 @@ class Plant {
       'maxHumidity': maxHumidity,
       'irrigationFrequencyHours': irrigationFrequency.inHours,
       'waterAmount': waterAmount,
+      'minLightHours': minLightHours,
+      'maxLightHours': maxLightHours,
+      'preferredLightLux': preferredLightIntensity,
       'description': description,
       'careInstructions': careInstructions,
     };
@@ -67,6 +80,9 @@ class Plant {
     double? maxHumidity,
     Duration? irrigationFrequency,
     int? waterAmount,
+    double? minLightHours,
+    double? maxLightHours,
+    double? preferredLightIntensity,
     String? description,
     String? careInstructions,
   }) {
@@ -79,6 +95,10 @@ class Plant {
       maxHumidity: maxHumidity ?? this.maxHumidity,
       irrigationFrequency: irrigationFrequency ?? this.irrigationFrequency,
       waterAmount: waterAmount ?? this.waterAmount,
+      minLightHours: minLightHours ?? this.minLightHours,
+      maxLightHours: maxLightHours ?? this.maxLightHours,
+      preferredLightIntensity:
+          preferredLightIntensity ?? this.preferredLightIntensity,
       description: description ?? this.description,
       careInstructions: careInstructions ?? this.careInstructions,
     );

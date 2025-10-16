@@ -1,6 +1,7 @@
 import '../models/plant.dart';
 import '../models/vase.dart';
 import '../models/irrigation_event.dart';
+import '../models/lighting_event.dart';
 
 /// Service that provides static mock data for development
 /// This will be replaced with real API calls later
@@ -25,6 +26,9 @@ class StaticDataService {
         maxHumidity: 80.0,
         irrigationFrequency: const Duration(hours: 24),
         waterAmount: 200,
+        minLightHours: 6.0,
+        maxLightHours: 8.0,
+        preferredLightIntensity: 12000,
         description: 'Popular culinary herb with aromatic leaves',
         careInstructions:
             'Keep soil consistently moist. Requires 6-8 hours of sunlight daily.',
@@ -39,6 +43,9 @@ class StaticDataService {
         maxHumidity: 85.0,
         irrigationFrequency: const Duration(hours: 12),
         waterAmount: 300,
+        minLightHours: 8.0,
+        maxLightHours: 12.0,
+        preferredLightIntensity: 15000,
         description: 'Fruit-bearing plant, requires consistent watering',
         careInstructions:
             'Water deeply and regularly. Needs full sun exposure.',
@@ -53,6 +60,9 @@ class StaticDataService {
         maxHumidity: 60.0,
         irrigationFrequency: const Duration(hours: 48),
         waterAmount: 150,
+        minLightHours: 6.0,
+        maxLightHours: 10.0,
+        preferredLightIntensity: 9000,
         description: 'Aromatic flowering plant, drought-tolerant',
         careInstructions:
             'Prefers well-drained soil. Water when soil is dry to touch.',
@@ -67,6 +77,9 @@ class StaticDataService {
         maxHumidity: 90.0,
         irrigationFrequency: const Duration(hours: 24),
         waterAmount: 250,
+        minLightHours: 4.0,
+        maxLightHours: 8.0,
+        preferredLightIntensity: 6000,
         description: 'Fast-growing herb, loves moisture',
         careInstructions:
             'Keep soil moist at all times. Partial shade is ideal.',
@@ -81,6 +94,9 @@ class StaticDataService {
         maxHumidity: 65.0,
         irrigationFrequency: const Duration(hours: 36),
         waterAmount: 180,
+        minLightHours: 6.0,
+        maxLightHours: 10.0,
+        preferredLightIntensity: 11000,
         description: 'Woody, perennial herb with fragrant leaves',
         careInstructions:
             'Allow soil to dry between waterings. Needs full sun.',
@@ -95,6 +111,9 @@ class StaticDataService {
         maxHumidity: 75.0,
         irrigationFrequency: const Duration(hours: 24),
         waterAmount: 220,
+        minLightHours: 8.0,
+        maxLightHours: 10.0,
+        preferredLightIntensity: 14000,
         description: 'Sweet berry-producing plant',
         careInstructions:
             'Regular watering is essential. Mulch to retain moisture.',
@@ -109,6 +128,9 @@ class StaticDataService {
         maxHumidity: 75.0,
         irrigationFrequency: const Duration(hours: 24),
         waterAmount: 190,
+        minLightHours: 4.0,
+        maxLightHours: 6.0,
+        preferredLightIntensity: 5000,
         description: 'Flavorful herb used in many cuisines',
         careInstructions: 'Keep soil moist. Prefers cooler temperatures.',
       ),
@@ -122,6 +144,9 @@ class StaticDataService {
         maxHumidity: 80.0,
         irrigationFrequency: const Duration(hours: 18),
         waterAmount: 280,
+        minLightHours: 8.0,
+        maxLightHours: 12.0,
+        preferredLightIntensity: 15000,
         description: 'Spicy fruit-bearing plant',
         careInstructions:
             'Consistent moisture is key. Loves warm temperatures.',
@@ -150,6 +175,9 @@ class StaticDataService {
           maxHumidity: 80.0,
           irrigationFrequency: const Duration(hours: 24),
           waterAmount: 200,
+          minLightHours: 6.0,
+          maxLightHours: 8.0,
+          preferredLightIntensity: 12000,
           description: 'Popular culinary herb with aromatic leaves',
           careInstructions:
               'Keep soil consistently moist. Requires 6-8 hours of sunlight daily.',
@@ -159,6 +187,13 @@ class StaticDataService {
         lastUpdated: now.subtract(const Duration(minutes: 5)),
         lastIrrigation: now.subtract(const Duration(hours: 8)),
         nextIrrigation: now.add(const Duration(hours: 16)),
+        currentLightLevel: 8500,
+        dailyLightExposure: 5.5,
+        averageLightExposure: 6.2,
+        isLightOn: false,
+        activeLightIntensity: null,
+        lastLighting: now.subtract(const Duration(hours: 2)),
+        nextLighting: now.add(const Duration(hours: 6)),
         irrigationHistory: [
           IrrigationEvent(
             id: 'event_1',
@@ -181,6 +216,30 @@ class StaticDataService {
             humidityAfter: 73.0,
           ),
         ],
+        lightingHistory: [
+          LightingEvent(
+            id: 'light_1',
+            vaseId: 'vase_1',
+            timestamp: now.subtract(const Duration(hours: 2)),
+            durationMinutes: 45,
+            intensityPercentage: 75,
+            isManual: false,
+            lightLevelBefore: 4200,
+            lightLevelAfter: 9100,
+            energyUsedWh: 56,
+          ),
+          LightingEvent(
+            id: 'light_2',
+            vaseId: 'vase_1',
+            timestamp: now.subtract(const Duration(days: 1, hours: 3)),
+            durationMinutes: 60,
+            intensityPercentage: 80,
+            isManual: false,
+            lightLevelBefore: 3800,
+            lightLevelAfter: 9500,
+            energyUsedWh: 72,
+          ),
+        ],
         isActive: true,
         isOnline: true,
       ),
@@ -198,6 +257,9 @@ class StaticDataService {
           maxHumidity: 85.0,
           irrigationFrequency: const Duration(hours: 12),
           waterAmount: 300,
+          minLightHours: 8.0,
+          maxLightHours: 12.0,
+          preferredLightIntensity: 15000,
           description: 'Fruit-bearing plant, requires consistent watering',
           careInstructions:
               'Water deeply and regularly. Needs full sun exposure.',
@@ -207,6 +269,13 @@ class StaticDataService {
         lastUpdated: now.subtract(const Duration(minutes: 2)),
         lastIrrigation: now.subtract(const Duration(hours: 4)),
         nextIrrigation: now.add(const Duration(hours: 8)),
+        currentLightLevel: 9800,
+        dailyLightExposure: 7.8,
+        averageLightExposure: 8.4,
+        isLightOn: true,
+        activeLightIntensity: 85,
+        lastLighting: now.subtract(const Duration(hours: 1)),
+        nextLighting: now.add(const Duration(hours: 5)),
         irrigationHistory: [
           IrrigationEvent(
             id: 'event_3',
@@ -217,6 +286,19 @@ class StaticDataService {
             isManual: false,
             humidityBefore: 61.0,
             humidityAfter: 75.0,
+          ),
+        ],
+        lightingHistory: [
+          LightingEvent(
+            id: 'light_3',
+            vaseId: 'vase_2',
+            timestamp: now.subtract(const Duration(hours: 1)),
+            durationMinutes: 90,
+            intensityPercentage: 85,
+            isManual: true,
+            lightLevelBefore: 4600,
+            lightLevelAfter: 10200,
+            energyUsedWh: 110,
           ),
         ],
         isActive: true,
@@ -231,7 +313,15 @@ class StaticDataService {
         lastUpdated: now.subtract(const Duration(minutes: 10)),
         lastIrrigation: null,
         nextIrrigation: null,
+        currentLightLevel: 3200,
+        dailyLightExposure: 1.2,
+        averageLightExposure: 2.0,
+        isLightOn: false,
+        activeLightIntensity: null,
+        lastLighting: now.subtract(const Duration(days: 1, hours: 5)),
+        nextLighting: now.add(const Duration(hours: 12)),
         irrigationHistory: [],
+        lightingHistory: [],
         isActive: true,
         isOnline: true,
       ),
@@ -244,7 +334,15 @@ class StaticDataService {
         lastUpdated: now.subtract(const Duration(minutes: 15)),
         lastIrrigation: null,
         nextIrrigation: null,
+        currentLightLevel: 2800,
+        dailyLightExposure: 0.5,
+        averageLightExposure: 1.1,
+        isLightOn: false,
+        activeLightIntensity: null,
+        lastLighting: now.subtract(const Duration(days: 2)),
+        nextLighting: now.add(const Duration(hours: 10)),
         irrigationHistory: [],
+        lightingHistory: [],
         isActive: true,
         isOnline: true,
       ),
@@ -269,6 +367,16 @@ class StaticDataService {
     String vaseId,
     int durationSeconds,
   ) async {
+    await _simulateDelay();
+    return true;
+  }
+
+  /// Trigger manual lighting adjustment
+  Future<bool> triggerManualLighting(
+    String vaseId,
+    int durationMinutes, {
+    int intensityPercentage = 80,
+  }) async {
     await _simulateDelay();
     return true;
   }

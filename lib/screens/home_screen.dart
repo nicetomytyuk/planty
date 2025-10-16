@@ -1,12 +1,14 @@
 // lib/screens/home_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 import '../providers/vase_provider.dart';
 import '../widgets/vase_card.dart';
 import '../models/vase.dart';
+import '../utils/constants.dart';
 
 import 'plant_selection_screen.dart';
 import 'vase_detail_screen.dart';
@@ -37,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        systemOverlayStyle: SystemUiOverlayStyle.light,
         title: const Text('Planty'),
         actions: [
           // View mode toggle
@@ -132,6 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final totalVases = provider.vases.length;
     final activeVases = provider.occupiedVases.length;
     final needsWater = provider.vasesNeedingWater.length;
+    final needsLight = provider.vasesNeedingLight.length;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -154,6 +158,16 @@ class _HomeScreenState extends State<HomeScreen> {
               '$needsWater',
               'Needs Water',
               needsWater > 0 ? Colors.orange : Colors.blue,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: _buildSummaryCard(
+              context,
+              Icons.light_mode,
+              '$needsLight',
+              'Needs Light',
+              needsLight > 0 ? Colors.amber : Colors.yellow[700]!,
             ),
           ),
         ],
@@ -216,6 +230,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onTap: () => _navigateToDetail(context, vase),
                   onPlantTap: () => _navigateToPlantSelection(context, vase),
                   onWaterTap: () => _waterVase(context, provider, vase),
+                  onLightTap: () => _boostLighting(context, provider, vase),
                 ),
               );
             },
@@ -273,6 +288,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onTap: () => _navigateToDetail(context, vase),
           onPlantTap: () => _navigateToPlantSelection(context, vase),
           onWaterTap: () => _waterVase(context, provider, vase),
+          onLightTap: () => _boostLighting(context, provider, vase),
         );
       },
     );
@@ -362,6 +378,68 @@ class _HomeScreenState extends State<HomeScreen> {
           SnackBar(
             content: Text(
               success ? 'Watering ${vase.name}...' : 'Failed to start watering',
+            ),
+            backgroundColor: success ? Colors.green : Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _boostLighting(
+    BuildContext context,
+    VaseProvider provider,
+    Vase vase,
+  ) async {
+    final computedDuration = vase.plant != null
+        ? (vase.plant!.minLightHours * 10).round()
+        : AppConstants.defaultLightDurationMinutes;
+    final recommendedDuration = computedDuration.clamp(30, 180).toInt();
+
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Boost Lighting'),
+        content: Text(
+          'Activate grow lights for ${vase.name}?\n\n'
+          'Duration: $recommendedDuration minutes\n'
+          'Intensity: ${AppConstants.defaultLightIntensityPercent}%',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Boost'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      if (!context.mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => const Center(child: CircularProgressIndicator()),
+      );
+
+      final success = await provider.boostLighting(
+        vase.id,
+        durationMinutes: recommendedDuration,
+      );
+
+      if (context.mounted) Navigator.pop(context);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              success
+                  ? 'Lighting ${vase.name}...'
+                  : 'Failed to activate lighting',
             ),
             backgroundColor: success ? Colors.green : Colors.red,
           ),
