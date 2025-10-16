@@ -491,40 +491,40 @@ class VaseCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Colors.grey.withValues(alpha: 0.2)),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildStatItem(
-            context,
-            Icons.access_time,
-            'Last Watered',
-            vase.lastIrrigation != null
-                ? dateFormat.format(vase.lastIrrigation!)
-                : 'Never',
-          ),
-          Container(
-            width: 1,
-            height: 40,
-            color: Colors.grey.withValues(alpha: 0.3),
-          ),
-          _buildStatItem(
-            context,
-            Icons.water,
-            'Total Used',
-            '${vase.totalWaterUsed.toStringAsFixed(1)}L',
-          ),
-          Container(
-            width: 1,
-            height: 40,
-            color: Colors.grey.withValues(alpha: 0.3),
-          ),
-          _buildStatItem(
-            context,
-            vase.isLightOn ? Icons.wb_incandescent : Icons.light_mode,
-            'Light ${vase.lightingStatus}',
-            '${vase.dailyLightExposure.toStringAsFixed(1)}h',
-          ),
-        ],
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: _buildStatItem(
+                context,
+                Icons.access_time,
+                'Last Watered',
+                vase.lastIrrigation != null
+                    ? dateFormat.format(vase.lastIrrigation!)
+                    : 'Never',
+              ),
+            ),
+            _buildStatDivider(),
+            Expanded(
+              child: _buildStatItem(
+                context,
+                Icons.water,
+                'Total Used',
+                '${vase.totalWaterUsed.toStringAsFixed(1)}L',
+              ),
+            ),
+            _buildStatDivider(),
+            Expanded(
+              child: _buildStatItem(
+                context,
+                vase.isLightOn ? Icons.wb_incandescent : Icons.light_mode,
+                'Light ${vase.lightingStatus}',
+                '${vase.dailyLightExposure.toStringAsFixed(1)}h',
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -535,17 +535,37 @@ class VaseCard extends StatelessWidget {
     String label,
     String value,
   ) {
-    return Column(
-      children: [
-        Icon(icon, size: 20, color: Colors.grey[600]),
-        const SizedBox(height: 4),
-        Text(label, style: TextStyle(fontSize: 10, color: Colors.grey[600])),
-        const SizedBox(height: 2),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 20, color: Colors.grey[600]),
+          const SizedBox(height: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey[600],
+              letterSpacing: 0.1,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatDivider() {
+    return Container(
+      width: 1,
+      margin: const EdgeInsets.symmetric(horizontal: 12),
+      color: Colors.grey.withValues(alpha: 0.25),
     );
   }
 

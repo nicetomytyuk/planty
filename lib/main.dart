@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => VaseProvider())],
       child: MaterialApp(
-        title: 'PlantCare',
+        title: 'Planty',
         debugShowCheckedModeBanner: false,
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,

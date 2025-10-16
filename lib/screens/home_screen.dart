@@ -9,6 +9,7 @@ import '../providers/vase_provider.dart';
 import '../widgets/vase_card.dart';
 import '../models/vase.dart';
 import '../utils/constants.dart';
+import '../utils/theme.dart';
 
 import 'plant_selection_screen.dart';
 import 'vase_detail_screen.dart';
@@ -136,81 +137,134 @@ class _HomeScreenState extends State<HomeScreen> {
     final activeVases = provider.occupiedVases.length;
     final needsWater = provider.vasesNeedingWater.length;
     final needsLight = provider.vasesNeedingLight.length;
+    final theme = Theme.of(context);
+    final textTheme = theme.textTheme;
 
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Row(
+    final stats = [
+      _SummaryStat(
+        icon: Icons.water_drop,
+        value: '$needsWater',
+        label: 'Needs Water',
+        caption: needsWater > 0 ? 'Requires attention' : 'All hydrated',
+        color: needsWater > 0
+            ? AppTheme.statusLow
+            : theme.colorScheme.secondary,
+      ),
+      _SummaryStat(
+        icon: Icons.light_mode,
+        value: '$needsLight',
+        label: 'Needs Light',
+        caption: needsLight > 0 ? 'Boost recommended' : 'Lighting ok',
+        color: needsLight > 0
+            ? AppTheme.statusHigh
+            : theme.colorScheme.tertiary,
+      ),
+    ];
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: _buildSummaryCard(
-              context,
-              Icons.local_florist,
-              '$activeVases/$totalVases',
-              'Active',
-              Colors.green,
-            ),
+          Row(
+            children: [
+              Text(
+                'My Garden',
+                style: textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withValues(alpha: 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '$activeVases / $totalVases active',
+                  style: textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.primary,
+                  ),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildSummaryCard(
-              context,
-              Icons.water_drop,
-              '$needsWater',
-              'Needs Water',
-              needsWater > 0 ? Colors.orange : Colors.blue,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: _buildSummaryCard(
-              context,
-              Icons.light_mode,
-              '$needsLight',
-              'Needs Light',
-              needsLight > 0 ? Colors.amber : Colors.yellow[700]!,
-            ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              for (var i = 0; i < stats.length; i++) ...[
+                Expanded(child: _buildSummaryCard(context, stats[i])),
+                if (i != stats.length - 1) const SizedBox(width: 12),
+              ],
+            ],
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSummaryCard(
-    BuildContext context,
-    IconData icon,
-    String value,
-    String label,
-    Color color,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 32),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                value,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.bold,
-                ),
+  Widget _buildSummaryCard(BuildContext context, _SummaryStat stat) {
+    final theme = Theme.of(context);
+    final cardColor = theme.cardTheme.color ?? theme.colorScheme.surface;
+    final iconTint = stat.color.withValues(
+      alpha: theme.brightness == Brightness.dark ? 0.22 : 0.14,
+    );
+    final labelColor =
+        theme.textTheme.bodyMedium?.color ?? theme.colorScheme.onSurface;
+
+    return Card(
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 1,
+      color: cardColor,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: iconTint,
+                shape: BoxShape.circle,
               ),
-              Text(
-                label,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: color.withValues(alpha: 0.8),
-                ),
+              child: Icon(stat.icon, color: stat.color, size: 22),
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    stat.value,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w700,
+                      color: stat.color,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    stat.label,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: labelColor,
+                      letterSpacing: 0.1,
+                    ),
+                    maxLines: 2,
+                    textAlign: TextAlign.right,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -219,32 +273,51 @@ class _HomeScreenState extends State<HomeScreen> {
     return Column(
       children: [
         Expanded(
-          child: CarouselSlider.builder(
-            itemCount: provider.vases.length,
-            itemBuilder: (context, index, realIndex) {
-              final vase = provider.vases[index];
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final sliderHeight = constraints.maxHeight;
+
               return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: VaseCard(
-                  vase: vase,
-                  onTap: () => _navigateToDetail(context, vase),
-                  onPlantTap: () => _navigateToPlantSelection(context, vase),
-                  onWaterTap: () => _waterVase(context, provider, vase),
-                  onLightTap: () => _boostLighting(context, provider, vase),
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: CarouselSlider.builder(
+                  itemCount: provider.vases.length,
+                  itemBuilder: (context, index, realIndex) {
+                    final vase = provider.vases[index];
+                    const gap = 12.0;
+                    final halfGap = gap / 2;
+                    final isFirst = index == 0;
+                    final isLast = index == provider.vases.length - 1;
+                    final itemPadding = EdgeInsets.only(
+                      left: isFirst ? 0 : halfGap,
+                      right: isLast ? 0 : halfGap,
+                    );
+
+                    return Padding(
+                      padding: itemPadding,
+                      child: VaseCard(
+                        vase: vase,
+                        onTap: () => _navigateToDetail(context, vase),
+                        onPlantTap: () => _navigateToPlantSelection(context, vase),
+                        onWaterTap: () => _waterVase(context, provider, vase),
+                        onLightTap: () => _boostLighting(context, provider, vase),
+                      ),
+                    );
+                  },
+                  options: CarouselOptions(
+                    height: sliderHeight,
+                    viewportFraction: 1.0,
+                    enlargeCenterPage: false,
+                    enableInfiniteScroll: false,
+                    padEnds: provider.vases.length <= 1,
+                    onPageChanged: (index, reason) {
+                      setState(() {
+                        _currentCarouselIndex = index;
+                      });
+                    },
+                  ),
                 ),
               );
             },
-            options: CarouselOptions(
-              height: 500,
-              viewportFraction: 0.85,
-              enlargeCenterPage: true,
-              enableInfiniteScroll: false,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _currentCarouselIndex = index;
-                });
-              },
-            ),
           ),
         ),
         const SizedBox(height: 16),
@@ -447,4 +520,20 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
   }
+}
+
+class _SummaryStat {
+  final IconData icon;
+  final String value;
+  final String label;
+  final String caption;
+  final Color color;
+
+  const _SummaryStat({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.caption,
+    required this.color,
+  });
 }
