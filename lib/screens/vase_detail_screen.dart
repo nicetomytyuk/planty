@@ -1,6 +1,7 @@
 // lib/screens/vase_detail_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/vase_provider.dart';
@@ -8,6 +9,7 @@ import '../utils/theme.dart';
 import '../utils/constants.dart';
 import '../models/irrigation_event.dart';
 import '../models/lighting_event.dart';
+import '../utils/system_ui.dart';
 
 class VaseDetailScreen extends StatelessWidget {
   final String vaseId;
@@ -16,44 +18,53 @@ class VaseDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Vase Details'),
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'rename') {
-                _showRenameDialog(context);
-              } else if (value == 'remove_plant') {
-                _showRemovePlantDialog(context);
-              }
-            },
-            itemBuilder: (context) => [
-              const PopupMenuItem(
-                value: 'rename',
-                child: Row(
-                  children: [
-                    Icon(Icons.edit),
-                    SizedBox(width: 8),
-                    Text('Rename Vase'),
-                  ],
+    final overlayStyle = adaptiveSystemUiOverlayStyle(context);
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: overlayStyle,
+      child: Scaffold(
+        extendBody: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          systemOverlayStyle: overlayStyle,
+          title: const Text('Vase Details'),
+          actions: [
+            PopupMenuButton<String>(
+              onSelected: (value) {
+                if (value == 'rename') {
+                  _showRenameDialog(context);
+                } else if (value == 'remove_plant') {
+                  _showRemovePlantDialog(context);
+                }
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  value: 'rename',
+                  child: Row(
+                    children: [
+                      Icon(Icons.edit),
+                      SizedBox(width: 8),
+                      Text('Rename Vase'),
+                    ],
+                  ),
                 ),
-              ),
-              const PopupMenuItem(
-                value: 'remove_plant',
-                child: Row(
-                  children: [
-                    Icon(Icons.delete_outline),
-                    SizedBox(width: 8),
-                    Text('Remove Plant'),
-                  ],
+                const PopupMenuItem(
+                  value: 'remove_plant',
+                  child: Row(
+                    children: [
+                      Icon(Icons.delete_outline),
+                      SizedBox(width: 8),
+                      Text('Remove Plant'),
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
-      body: Consumer<VaseProvider>(
+              ],
+            ),
+          ],
+        ),
+        body: Consumer<VaseProvider>(
         builder: (context, provider, child) {
           final vase = provider.getVaseById(vaseId);
 
@@ -103,8 +114,9 @@ class VaseDetailScreen extends StatelessWidget {
           );
         },
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildHeaderCard(BuildContext context, vase) {
     return Card(

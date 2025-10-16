@@ -1,9 +1,11 @@
 // lib/screens/plant_selection_screen.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/vase_provider.dart';
 import '../models/plant.dart';
+import '../utils/system_ui.dart';
 
 class PlantSelectionScreen extends StatefulWidget {
   final String vaseId;
@@ -20,9 +22,20 @@ class _PlantSelectionScreenState extends State<PlantSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Select a Plant')),
-      body: Consumer<VaseProvider>(
+    final overlayStyle = adaptiveSystemUiOverlayStyle(context);
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: overlayStyle,
+      child: Scaffold(
+        extendBody: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          systemOverlayStyle: overlayStyle,
+          title: const Text('Select a Plant'),
+        ),
+        body: Consumer<VaseProvider>(
         builder: (context, provider, child) {
           final vase = provider.getVaseById(widget.vaseId);
 
@@ -170,8 +183,9 @@ class _PlantSelectionScreenState extends State<PlantSelectionScreen> {
           );
         },
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildPlantItem(BuildContext context, Plant plant, bool isSelected) {
     return Card(

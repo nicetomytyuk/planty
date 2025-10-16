@@ -10,6 +10,7 @@ import '../widgets/vase_card.dart';
 import '../models/vase.dart';
 import '../utils/constants.dart';
 import '../utils/theme.dart';
+import '../utils/system_ui.dart';
 
 import 'plant_selection_screen.dart';
 import 'vase_detail_screen.dart';
@@ -38,18 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    final overlayStyle = SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
-      statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
-      systemNavigationBarColor: Colors.transparent,
-      systemNavigationBarIconBrightness: isDark
-          ? Brightness.light
-          : Brightness.dark,
-      systemNavigationBarDividerColor: Colors.transparent,
-    );
+    final overlayStyle = adaptiveSystemUiOverlayStyle(context);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: overlayStyle,
