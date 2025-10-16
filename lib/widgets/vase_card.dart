@@ -28,7 +28,8 @@ class VaseCard extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Card(
-        elevation: 1,
+        margin: const EdgeInsets.symmetric(vertical: 8),
+        elevation: 0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
 
         child: Container(

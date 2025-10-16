@@ -60,7 +60,10 @@ class _HomeScreenState extends State<HomeScreen> {
           surfaceTintColor: Colors.transparent,
           elevation: 0,
           systemOverlayStyle: overlayStyle,
-          title: const Text('Planty'),
+          title: const Align(
+            alignment: Alignment.centerLeft,
+            child: Text('Planty'),
+          ),
           actions: [
             // View mode toggle
             IconButton(
@@ -196,6 +199,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 'My Garden',
                 style: textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.w700,
+                  color: theme.colorScheme.primary,
                 ),
               ),
               const Spacer(),
@@ -244,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Card(
       margin: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
+      elevation: 0,
       color: cardColor,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
@@ -300,23 +304,27 @@ class _HomeScreenState extends State<HomeScreen> {
           child: LayoutBuilder(
             builder: (context, constraints) {
               final sliderHeight = constraints.maxHeight;
+              const horizontalPadding = 16.0;
+              const itemGap = 12.0;
+              final availableWidth = constraints.maxWidth;
+              final contentWidth = (availableWidth - horizontalPadding * 2)
+                  .clamp(0.0, availableWidth);
+              final viewportWidth = (contentWidth + itemGap).clamp(
+                0.0,
+                availableWidth,
+              );
+              final viewportFraction = availableWidth == 0
+                  ? 1.0
+                  : (viewportWidth / availableWidth).clamp(0.0, 1.0);
 
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: CarouselSlider.builder(
-                  itemCount: provider.vases.length,
-                  itemBuilder: (context, index, realIndex) {
-                    final vase = provider.vases[index];
-                    const gap = 0.0;
-                    final isFirst = index == 0;
-                    final isLast = index == provider.vases.length - 1;
-                    final itemPadding = EdgeInsets.only(
-                      left: isFirst ? 0 : gap,
-                      right: isLast ? 0 : gap,
-                    );
-
-                    return Padding(
-                      padding: itemPadding,
+              return CarouselSlider.builder(
+                itemCount: provider.vases.length,
+                itemBuilder: (context, index, realIndex) {
+                  final vase = provider.vases[index];
+                  return Padding(
+                    padding: EdgeInsets.symmetric(horizontal: itemGap / 2),
+                    child: SizedBox(
+                      width: contentWidth,
                       child: VaseCard(
                         vase: vase,
                         onTap: () => _navigateToDetail(context, vase),
@@ -326,21 +334,22 @@ class _HomeScreenState extends State<HomeScreen> {
                         onLightTap: () =>
                             _boostLighting(context, provider, vase),
                       ),
-                    );
+                    ),
+                  );
+                },
+                options: CarouselOptions(
+                  height: sliderHeight,
+                  viewportFraction: viewportFraction,
+                  enlargeCenterPage: false,
+                  enableInfiniteScroll: false,
+                  padEnds: true,
+                  disableCenter: false,
+                  pageSnapping: true,
+                  onPageChanged: (index, reason) {
+                    setState(() {
+                      _currentCarouselIndex = index;
+                    });
                   },
-                  options: CarouselOptions(
-                    height: sliderHeight,
-                    viewportFraction: 1.0,
-                    enlargeCenterPage: false,
-                    enableInfiniteScroll: false,
-                    padEnds: false,
-                    disableCenter: true,
-                    onPageChanged: (index, reason) {
-                      setState(() {
-                        _currentCarouselIndex = index;
-                      });
-                    },
-                  ),
                 ),
               );
             },

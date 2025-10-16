@@ -109,7 +109,7 @@ class VaseDetailScreen extends StatelessWidget {
   Widget _buildHeaderCard(BuildContext context, vase) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -205,7 +205,7 @@ class VaseDetailScreen extends StatelessWidget {
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -368,7 +368,7 @@ class VaseDetailScreen extends StatelessWidget {
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -421,7 +421,7 @@ class VaseDetailScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            const Divider(),
+            Divider(color: Colors.grey[600]?.withValues(alpha: 0.2)),
             const SizedBox(height: 16),
             Row(
               children: [
@@ -453,7 +453,8 @@ class VaseDetailScreen extends StatelessWidget {
                         vase.currentLightLevel != null
                             ? '${vase.currentLightLevel!.toStringAsFixed(0)} lux'
                             : 'No sensor data',
-                        style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                        style: Theme.of(context).textTheme.headlineSmall
+                            ?.copyWith(
                               color: lightStatusColor,
                               fontWeight: FontWeight.w600,
                             ),
@@ -464,16 +465,15 @@ class VaseDetailScreen extends StatelessWidget {
                             ? 'Today ${vase.dailyLightExposure.toStringAsFixed(1)}h / Target ${vase.plant!.minLightHours.toStringAsFixed(1)}-${vase.plant!.maxLightHours.toStringAsFixed(1)}h'
                             : 'No plant assigned',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Colors.grey[600],
-                            ),
+                          color: Colors.grey[600],
+                        ),
                       ),
                       if (vase.averageLightExposure != null) ...[
                         const SizedBox(height: 2),
                         Text(
                           '7-day avg: ${vase.averageLightExposure!.toStringAsFixed(1)}h',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Colors.grey[600],
-                              ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.grey[600]),
                         ),
                       ],
                       const SizedBox(height: 4),
@@ -489,7 +489,8 @@ class VaseDetailScreen extends StatelessWidget {
                         const SizedBox(height: 4),
                         Text(
                           'Grow light active at ${vase.activeLightIntensity ?? 100}%',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
                                 color: lightStatusColor,
                                 fontWeight: FontWeight.w500,
                               ),
@@ -502,7 +503,7 @@ class VaseDetailScreen extends StatelessWidget {
             ),
             if (vase.currentTemperature != null) ...[
               const SizedBox(height: 16),
-              const Divider(),
+              Divider(color: Colors.grey[600]?.withValues(alpha: 0.2)),
               const SizedBox(height: 16),
               // Temperature
               Row(
@@ -542,7 +543,7 @@ class VaseDetailScreen extends StatelessWidget {
               ),
             ],
             const SizedBox(height: 16),
-            const Divider(),
+            Divider(color: Colors.grey[600]?.withValues(alpha: 0.2)),
             const SizedBox(height: 16),
             // Last update
             Row(
@@ -584,10 +585,9 @@ class VaseDetailScreen extends StatelessWidget {
                   const SizedBox(width: 8),
                   Text(
                     'Last lighting: ${dateFormat.format(vase.lastLighting!)}',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: Colors.grey[600]),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -596,18 +596,13 @@ class VaseDetailScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Row(
                 children: [
-                  Icon(
-                    Icons.light_mode,
-                    color: Colors.grey[600],
-                    size: 20,
-                  ),
+                  Icon(Icons.light_mode, color: Colors.grey[600], size: 20),
                   const SizedBox(width: 8),
                   Text(
                     'Next lighting: ${dateFormat.format(vase.nextLighting!)}',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(color: Colors.grey[600]),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
                   ),
                 ],
               ),
@@ -621,7 +616,7 @@ class VaseDetailScreen extends StatelessWidget {
   Widget _buildQuickActions(BuildContext context, provider, vase) {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -684,7 +679,7 @@ class VaseDetailScreen extends StatelessWidget {
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -731,7 +726,10 @@ class VaseDetailScreen extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: history.length > 5 ? 5 : history.length,
-                separatorBuilder: (context, index) => const Divider(height: 24),
+                separatorBuilder: (context, index) => Divider(
+                  color: Colors.grey[600]?.withValues(alpha: 0.2),
+                  height: 24,
+                ),
                 itemBuilder: (context, index) {
                   final event = history[index];
                   return _buildHistoryItem(context, event);
@@ -821,7 +819,7 @@ class VaseDetailScreen extends StatelessWidget {
 
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 1,
+      elevation: 0,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -836,10 +834,9 @@ class VaseDetailScreen extends StatelessWidget {
                 ),
                 Text(
                   '${history.length} events',
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodyMedium
-                      ?.copyWith(color: Colors.grey[600]),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
                 ),
               ],
             ),
@@ -869,7 +866,10 @@ class VaseDetailScreen extends StatelessWidget {
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: history.length > 5 ? 5 : history.length,
-                separatorBuilder: (context, index) => const Divider(height: 24),
+                separatorBuilder: (context, index) => Divider(
+                  color: Colors.grey[600]?.withValues(alpha: 0.2),
+                  height: 24,
+                ),
                 itemBuilder: (context, index) {
                   final event = history[index];
                   return _buildLightingHistoryItem(context, event);
@@ -892,13 +892,11 @@ class VaseDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLightingHistoryItem(
-    BuildContext context,
-    LightingEvent event,
-  ) {
+  Widget _buildLightingHistoryItem(BuildContext context, LightingEvent event) {
     final dateFormat = DateFormat('MMM dd, HH:mm');
-    final Color accentColor =
-        event.isManual ? Colors.amber : Colors.orangeAccent;
+    final Color accentColor = event.isManual
+        ? Colors.amber
+        : Colors.orangeAccent;
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -927,10 +925,9 @@ class VaseDetailScreen extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 dateFormat.format(event.timestamp),
-                style: Theme.of(context)
-                    .textTheme
-                    .bodySmall
-                    ?.copyWith(color: Colors.grey[600]),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
               ),
               const SizedBox(height: 8),
               Wrap(
@@ -1051,8 +1048,7 @@ class VaseDetailScreen extends StatelessWidget {
     final computedDuration = vase.plant != null
         ? (vase.plant!.minLightHours * 10).round()
         : AppConstants.defaultLightDurationMinutes;
-    final recommendedDuration =
-        computedDuration.clamp(30, 180).toInt();
+    final recommendedDuration = computedDuration.clamp(30, 180).toInt();
 
     final confirm = await showDialog<bool>(
       context: context,
