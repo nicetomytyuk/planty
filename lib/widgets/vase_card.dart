@@ -322,8 +322,8 @@ class VaseCard extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, c) {
         final h = c.maxHeight.isFinite ? c.maxHeight : 220.0;
-        final img = (h * 0.7).clamp(68.0, 90.0);
-        final gap = (h * 0.06).clamp(6.0, 12.0);
+        final img = (h * 0.68).clamp(64.0, 88.0);
+        final gap = (h * 0.05).clamp(5.0, 10.0);
 
         return Center(
           child: Column(
@@ -381,7 +381,7 @@ class VaseCard extends StatelessWidget {
                 ),
               ),
 
-              SizedBox(height: gap),
+              SizedBox(height: gap * 0.8),
 
               // name (1 line) and optional species on roomy tiles
               ConstrainedBox(
@@ -395,7 +395,7 @@ class VaseCard extends StatelessWidget {
                 ),
               ),
               if (h > 235) ...[
-                const SizedBox(height: 6),
+                const SizedBox(height: 4),
                 ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 220),
                   child: Text(
@@ -431,7 +431,11 @@ class VaseCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.water_drop, size: 14),
+          Icon(
+            Icons.water_drop,
+            size: 14,
+            color: theme.textTheme.labelSmall?.color,
+          ),
           const SizedBox(width: 4),
           Text(
             '${humidity.toStringAsFixed(0)}%',
@@ -574,7 +578,7 @@ class VaseCard extends StatelessWidget {
     if (vase.isEmpty) {
       if (compact) {
         return Align(
-          alignment: Alignment.centerRight,
+          alignment: Alignment.center,
           child: IconButton.filled(
             onPressed: onPlantTap,
             icon: const Icon(Icons.add),
@@ -598,7 +602,7 @@ class VaseCard extends StatelessWidget {
     } else {
       if (compact) {
         return Row(
-          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             IconButton.outlined(
               onPressed: onWaterTap,
@@ -607,7 +611,6 @@ class VaseCard extends StatelessWidget {
                 side: BorderSide(color: theme.colorScheme.primary),
               ),
             ),
-            const SizedBox(width: 6),
             IconButton.outlined(
               onPressed: onLightTap,
               icon: const Icon(Icons.light_mode),
@@ -615,7 +618,6 @@ class VaseCard extends StatelessWidget {
                 side: BorderSide(color: theme.colorScheme.secondary),
               ),
             ),
-            const SizedBox(width: 6),
             IconButton.filled(
               onPressed: onTap,
               icon: const Icon(Icons.info_outline),
