@@ -1,6 +1,6 @@
 name: planty
-description: "A new Flutter project."
-publish_to: 'none'
+description: "Planty will simplify your plants irrigation by providing a user-friendly application that connects with your PlantyPot."
+publish_to: "none"
 version: 0.1.0
 
 environment:
@@ -11,8 +11,14 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter:
     sdk: flutter
+  flutter_launcher_icons: ^0.14.4
   intl: ^0.20.2
   provider: ^6.1.5+1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/icon.png"
 
 dev_dependencies:
   flutter_test:
