@@ -38,96 +38,120 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        title: const Text('Planty'),
-        actions: [
-          // View mode toggle
-          IconButton(
-            icon: Icon(
-              _viewMode == ViewMode.carousel
-                  ? Icons.grid_view_rounded
-                  : Icons.view_carousel_rounded,
-            ),
-            onPressed: () {
-              setState(() {
-                _viewMode = _viewMode == ViewMode.carousel
-                    ? ViewMode.grid
-                    : ViewMode.carousel;
-              });
-            },
-            tooltip: 'Toggle view',
-          ),
-          // Refresh button
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: () {
-              context.read<VaseProvider>().refreshVases();
-            },
-            tooltip: 'Refresh',
-          ),
-          const SizedBox(width: 8),
-        ],
-      ),
-      body: Consumer<VaseProvider>(
-        builder: (context, provider, child) {
-          if (provider.isLoading && provider.vases.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final overlayStyle = SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: isDark
+          ? Brightness.light
+          : Brightness.dark,
+      systemNavigationBarDividerColor: Colors.transparent,
+    );
 
-          if (provider.errorMessage != null) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline, size: 60, color: Colors.grey[400]),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Something went wrong',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32),
-                    child: Text(
-                      provider.errorMessage!,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey[600]),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: overlayStyle,
+      child: Scaffold(
+        extendBody: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+          systemOverlayStyle: overlayStyle,
+          title: const Text('Planty'),
+          actions: [
+            // View mode toggle
+            IconButton(
+              icon: Icon(
+                _viewMode == ViewMode.carousel
+                    ? Icons.grid_view_rounded
+                    : Icons.view_carousel_rounded,
+              ),
+              onPressed: () {
+                setState(() {
+                  _viewMode = _viewMode == ViewMode.carousel
+                      ? ViewMode.grid
+                      : ViewMode.carousel;
+                });
+              },
+              tooltip: 'Toggle view',
+            ),
+            // Refresh button
+            IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () {
+                context.read<VaseProvider>().refreshVases();
+              },
+              tooltip: 'Refresh',
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
+        body: Consumer<VaseProvider>(
+          builder: (context, provider, child) {
+            if (provider.isLoading && provider.vases.isEmpty) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (provider.errorMessage != null) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.error_outline,
+                      size: 60,
+                      color: Colors.grey[400],
                     ),
-                  ),
-                  const SizedBox(height: 24),
-                  ElevatedButton.icon(
-                    onPressed: () => provider.initialize(),
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('Retry'),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Something went wrong',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 32),
+                      child: Text(
+                        provider.errorMessage!,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      onPressed: () => provider.initialize(),
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry'),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            if (provider.vases.isEmpty) {
+              return _buildEmptyState(context);
+            }
+
+            return RefreshIndicator(
+              onRefresh: () => provider.refreshVases(),
+              child: Column(
+                children: [
+                  // Summary header
+                  _buildSummaryHeader(context, provider),
+
+                  // Main content
+                  Expanded(
+                    child: _viewMode == ViewMode.carousel
+                        ? _buildCarouselView(context, provider)
+                        : _buildGridView(context, provider),
                   ),
                 ],
               ),
             );
-          }
-
-          if (provider.vases.isEmpty) {
-            return _buildEmptyState(context);
-          }
-
-          return RefreshIndicator(
-            onRefresh: () => provider.refreshVases(),
-            child: Column(
-              children: [
-                // Summary header
-                _buildSummaryHeader(context, provider),
-
-                // Main content
-                Expanded(
-                  child: _viewMode == ViewMode.carousel
-                      ? _buildCarouselView(context, provider)
-                      : _buildGridView(context, provider),
-                ),
-              ],
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }
@@ -283,13 +307,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   itemCount: provider.vases.length,
                   itemBuilder: (context, index, realIndex) {
                     final vase = provider.vases[index];
-                    const gap = 12.0;
-                    final halfGap = gap / 2;
+                    const gap = 0.0;
                     final isFirst = index == 0;
                     final isLast = index == provider.vases.length - 1;
                     final itemPadding = EdgeInsets.only(
-                      left: isFirst ? 0 : halfGap,
-                      right: isLast ? 0 : halfGap,
+                      left: isFirst ? 0 : gap,
+                      right: isLast ? 0 : gap,
                     );
 
                     return Padding(
@@ -297,9 +320,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: VaseCard(
                         vase: vase,
                         onTap: () => _navigateToDetail(context, vase),
-                        onPlantTap: () => _navigateToPlantSelection(context, vase),
+                        onPlantTap: () =>
+                            _navigateToPlantSelection(context, vase),
                         onWaterTap: () => _waterVase(context, provider, vase),
-                        onLightTap: () => _boostLighting(context, provider, vase),
+                        onLightTap: () =>
+                            _boostLighting(context, provider, vase),
                       ),
                     );
                   },
@@ -308,7 +333,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     viewportFraction: 1.0,
                     enlargeCenterPage: false,
                     enableInfiniteScroll: false,
-                    padEnds: provider.vases.length <= 1,
+                    padEnds: false,
+                    disableCenter: true,
                     onPageChanged: (index, reason) {
                       setState(() {
                         _currentCarouselIndex = index;
