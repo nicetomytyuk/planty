@@ -12,6 +12,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.7
   intl: ^0.20.2
   provider: ^6.1.5+1
 
@@ -22,6 +23,16 @@ flutter_icons:
   web:
     generate: true
     image_path: "assets/icon/icon.png"
+
+flutter_native_splash:
+  color: "#fbf490"
+  image: assets/images/logo.png
+  android: true
+  ios: true
+  web: true
+  android_12:
+    image: assets/images/logo.png
+    color: "#fbf490"
 
 dev_dependencies:
   flutter_test:
