@@ -1,12 +1,16 @@
 import 'package:flutter/foundation.dart';
 import '../models/vase.dart';
 import '../models/plant.dart';
-import '../services/static_data_service.dart';
+import '../services/supabase_data_service.dart';
+import '../services/vase_data_service.dart';
 import '../utils/constants.dart';
 
 /// Manages the state of all vases in the application
 class VaseProvider with ChangeNotifier {
-  final StaticDataService _dataService = StaticDataService();
+  VaseProvider({VaseDataService? dataService})
+      : _dataService = dataService ?? SupabaseDataService();
+
+  final VaseDataService _dataService;
 
   // State
   List<Vase> _vases = [];
@@ -47,8 +51,10 @@ class VaseProvider with ChangeNotifier {
         _dataService.getPlantLibrary(),
       ]);
 
-      _vases = results[0] as List<Vase>;
-      _plantLibrary = results[1] as List<Plant>;
+      final fetchedVases = results[0] as List<Vase>;
+      final plants = results[1] as List<Plant>;
+      _plantLibrary = plants;
+      _vases = _linkPlantDetails(fetchedVases);
       _errorMessage = null;
     } catch (e) {
       _errorMessage = 'Failed to load data: $e';
@@ -62,7 +68,8 @@ class VaseProvider with ChangeNotifier {
   /// Refresh vases data
   Future<void> refreshVases() async {
     try {
-      _vases = await _dataService.getVases();
+      final vases = await _dataService.getVases();
+      _vases = _linkPlantDetails(vases);
       _errorMessage = null;
       notifyListeners();
     } catch (e) {
@@ -242,5 +249,21 @@ class VaseProvider with ChangeNotifier {
   void clearError() {
     _errorMessage = null;
     notifyListeners();
+  }
+
+  List<Vase> _linkPlantDetails(List<Vase> vases) {
+    if (_plantLibrary.isEmpty) return vases;
+    final plantLookup = {
+      for (final plant in _plantLibrary) plant.id: plant,
+    };
+    return vases
+        .map((vase) {
+          final plant = vase.plant;
+          if (plant == null) return vase;
+          final resolved = plantLookup[plant.id];
+          if (resolved == null) return vase;
+          return vase.copyWith(plant: resolved);
+        })
+        .toList();
   }
 }

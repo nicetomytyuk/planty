@@ -1,10 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+
+import 'bootstrap/supabase_initializer.dart';
 import 'providers/vase_provider.dart';
 import 'screens/home_screen.dart';
 import 'utils/theme.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await dotenv.load(fileName: '.env');
+  } catch (error, stackTrace) {
+    debugPrint('Failed to load environment variables: $error\n$stackTrace');
+  }
+  try {
+    await initializeSupabase();
+  } catch (error, stackTrace) {
+    debugPrint('Supabase initialization failed: $error\n$stackTrace');
+  }
   runApp(const MyApp());
 }
 

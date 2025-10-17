@@ -2,16 +2,18 @@ import '../models/plant.dart';
 import '../models/vase.dart';
 import '../models/irrigation_event.dart';
 import '../models/lighting_event.dart';
+import 'vase_data_service.dart';
 
 /// Service that provides static mock data for development
 /// This will be replaced with real API calls later
-class StaticDataService {
+class StaticDataService implements VaseDataService {
   /// Simulates network delay
   Future<void> _simulateDelay() async {
     await Future.delayed(const Duration(milliseconds: 500));
   }
 
   /// Get all available plants in the library
+  @override
   Future<List<Plant>> getPlantLibrary() async {
     await _simulateDelay();
 
@@ -155,6 +157,7 @@ class StaticDataService {
   }
 
   /// Get all vases from the irrigation system
+  @override
   Future<List<Vase>> getVases() async {
     await _simulateDelay();
 
@@ -350,6 +353,7 @@ class StaticDataService {
   }
 
   /// Assign a plant to a vase
+  @override
   Future<bool> assignPlantToVase(String vaseId, String plantId) async {
     await _simulateDelay();
     // Simulate success
@@ -357,12 +361,14 @@ class StaticDataService {
   }
 
   /// Remove plant from a vase
+  @override
   Future<bool> removePlantFromVase(String vaseId) async {
     await _simulateDelay();
     return true;
   }
 
   /// Trigger manual irrigation
+  @override
   Future<bool> triggerManualIrrigation(
     String vaseId,
     int durationSeconds,
@@ -372,6 +378,7 @@ class StaticDataService {
   }
 
   /// Trigger manual lighting adjustment
+  @override
   Future<bool> triggerManualLighting(
     String vaseId,
     int durationMinutes, {
@@ -382,6 +389,7 @@ class StaticDataService {
   }
 
   /// Update vase configuration
+  @override
   Future<bool> updateVaseConfig(
     String vaseId,
     Map<String, dynamic> config,
